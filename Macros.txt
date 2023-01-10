@@ -1,0 +1,26 @@
+#### Config inicial para atuar na pasta Julia_scripts
+
+
+
+
+
+########## Example
+
+
+
+
+
+try Meta.parse("1 + 0.5im")
+
+
+BigInt(floor(real(x)))
+
+
+try parse(Complex{Float64}, "asd asd 876456467968678")
+
+catch
+
+
+for i in lastindex(P):-1:1 ((x > P[i]) && (println("AE! $(P[1:i])"); break;)) end
+
+

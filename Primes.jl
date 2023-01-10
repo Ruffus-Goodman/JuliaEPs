@@ -1,44 +1,65 @@
-﻿function isprime(x::Int, P=Vector{Int}())
+﻿function exp_sup(pot::Number)
+	exp_str = ""
+	E = ["⁰", "¹", "²", "³", "⁴", "⁵", "⁶", "⁷", "⁸", "⁹"]
+	pot_str = "$pot"
+	for i in eachindex(pot_str)
+		exp_str *= E[parse(Int,pot_str[i])+1]
+	end
+	return exp_str
+end
+@doc "Função que converte expoentes em sobrescrito não-computável" exp_sup
+
+# Testando Primos
+#########################
+
+function isprime(x::BigInt)
 	x < 1 && throw(DomainError(x, "argument must be an integer higher than 0"))
 	r = 2
-	while r <= div(x,sqrt(x))
-		if x % r < 1 
+	(x > 2 && x % r == 0) ? (return false) : (r += 1)
+	while r <= floor(sqrt(x))
+		if (x % r < 1)
 			return false
 		else
-			r += 1	
+			r += 2
 		end
 	end
 	return true
 end
 @doc "Função que testa se um número é primo. Retorna Bool" isprime
 
-isprime(x) = throw(TypeError(x, Int, typeof(x)))
+isprime(x) = error("fodeu!")
+isprime(x) = isprime(BigInt(floor(real(x))))
 
 #########################
 function promptprime()
 	print("Escreva um número inteiro maior que zero e listarei os primos para você: ")
-	number = readline(stdin)
+	user_input = readline(stdin)
 	try
-		number = parse(Int, number)
+		user_input = parse(Complex{Float64}, user_input)
 	catch
-		println("$number não é um número inteiro válido")
+		println("$user_input não é um número inteiro válido")
 		promptprime()
 		return
 	end
-	if number > 0
-		P = primelist(number)
-		println("\nPrimos listados até $number e devolvidos em um Vetor.\n")
+	if user_input > 0
+		P = primelist(user_input)
+		println("\nPrimos listados até $user_input e devolvidos em um Vetor.\n")
 		return P
 	else
-		println("$number não é maior que zero\n")
+		println("$user_input não é maior que zero\n")
 		promptprime()
 	end
 end
 @doc "Versão com interface para usuário da listagem de primos. Retorna Vetor P" promptprime
 
-function primelist(number::Int)
-	P = Vector{Int}()
-	for i in 1:number
+#########################
+
+function primelist(x::BigInt)
+	P = Number[1, 2, 3, 5, 7, 11, 13, 17, 19, 23]
+	if x < 29
+		for i in lastindex(P):-1:1 ((x > P[i]) && (return P[1:i])); end
+	end
+	for i in 29:2:x
 		if isprime(i)
 			push!(P, i)
 		end
@@ -47,6 +68,11 @@ function primelist(number::Int)
 end
 @doc "função de listagem de primos. Devolve um vetor" primelist
 
+primelist(x) = primelist(BigInt(floor(real(x))))
+
+############# ------------ mexer
+
+# Fatorando em primos
 #########################
 function promptfact()
 	print("Escreva um número inteiro maior que zero para ser fatorado em primos: ")
@@ -69,23 +95,29 @@ function promptfact()
 end
 @doc "versão com interface para usuário da fatoração de um número" promptfact
 
-function factlist(number::Int; plist=false)
+function factlist(number::Int; plist=false, math_exp=true)
 	P = primelist(number)
 	fatorado = ""
 	for i in 2:lastindex(P)
 		if number % P[i] == 0
-			fatorado *= "*$(P[i])"
+			fatorado *= " * $(P[i])"
 			pot = 1
 			Int(number /= P[i])
 			while number % P[i] == 0
 				pot += 1
 				Int(number /= P[i])
 			end
-			pot > 1 ? fatorado *= "^$pot" : fatorado
+			if math_exp && pot > 1
+				fatorado *= "^$pot"
+			elseif pot > 1
+				fatorado *= "$(exp_sup(pot))"
+			else
+				fatorado
+			end
 		end
 	end
 	plist && println(P)
-	return fatorado[2:end]
+	return fatorado[4:end]
 end
 @doc "função de listagem de fatoração. Devolve uma string" factlist
 
