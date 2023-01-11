@@ -35,7 +35,7 @@ function promptprime()
 	print("Escreva um número inteiro maior que zero e listarei os primos para você: ")
 	user_input = readline(stdin)
 	try
-		user_input = parse(Complex{Float64}, user_input)
+		user_input = BigInt(floor(real(parse(Complex{Float64}, user_input))))
 	catch
 		println("$user_input não é um número inteiro válido")
 		promptprime()
@@ -59,10 +59,8 @@ function primelist(x::BigInt)
 	if x < 29
 		for i in lastindex(P):-1:1 ((x > P[i]) && (return P[1:i])); end
 	end
-	for i in 29:2:x
-		if isprime(i)
-			push!(P, i)
-		end
+	for i::BigInt in 29:2:x
+		isprime(i) && push!(P, i)
 	end
 	return P
 end
@@ -119,7 +117,7 @@ function factlist(fact_num::BigInt; plist=false, math_exp=true)
 end
 @doc "função de listagem de fatoração. Devolve uma string" factlist
 
-factlist(x) = factlist(BigInt(floor(real(x))))
+factlist(fact_num; plist=false, math_exp=true) = factlist(BigInt(floor(real(fact_num))); plist, math_exp)
 
 #########################
 factório(n) = factório(BigInt(floor(real(n))))
