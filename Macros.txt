@@ -5,11 +5,17 @@
 
 
 ########## Example
+macro stable(ex::Expr)
+	(ex.head === :(=) && ex.args[1] isa Symbol) || throw(ArgumentError("@stable: `$(ex)` is not an assigment expression."))
+	quote
+		local tmp = $(esc(ex.args[2]))
+		$(esc(ex.args[1]))::typeof(tmp) = tmp
+	end
+end
 
 
 
-
-
+########## exemplos para usar e substituir em factorial
 try Meta.parse("1 + 0.5im")
 
 

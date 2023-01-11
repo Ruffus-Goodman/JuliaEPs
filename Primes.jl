@@ -70,42 +70,40 @@ end
 
 primelist(x) = primelist(BigInt(floor(real(x))))
 
-############# ------------ mexer
-
 # Fatorando em primos
 #########################
 function promptfact()
 	print("Escreva um número inteiro maior que zero para ser fatorado em primos: ")
-	number = readline(stdin)
+	user_entry = readline(stdin)
 	try
-		number = parse(Int, number)
+		user_entry = parse(Int, user_entry)
 	catch
-		println("$number não é um número inteiro válido")
+		println("$user_entry não é um número inteiro válido")
 		promptfact()
 		return
 	end
-	if number > 0
-		fatorado = factlist(number)
-		println("\n$number fatorado em $fatorado.\n")
+	if user_entry > 0
+		fatorado = factlist(user_entry)
+		println("\n$user_entry fatorado em $fatorado.\n")
 		return fatorado
 	else
-		println("$number não é maior que zero\n")
+		println("$user_entry não é maior que zero\n")
 		promptfact()
 	end
 end
 @doc "versão com interface para usuário da fatoração de um número" promptfact
 
-function factlist(number::Int; plist=false, math_exp=true)
-	P = primelist(number)
+function factlist(fact_num::BigInt; plist=false, math_exp=true)
+	P = primelist(fact_num)
 	fatorado = ""
 	for i in 2:lastindex(P)
-		if number % P[i] == 0
+		if fact_num % P[i] == 0
 			fatorado *= " * $(P[i])"
 			pot = 1
-			Int(number /= P[i])
-			while number % P[i] == 0
+			fact_num ÷= P[i]
+			while fact_num % P[i] == 0
 				pot += 1
-				Int(number /= P[i])
+				fact_num ÷= P[i]
 			end
 			if math_exp && pot > 1
 				fatorado *= "^$pot"
@@ -121,10 +119,12 @@ function factlist(number::Int; plist=false, math_exp=true)
 end
 @doc "função de listagem de fatoração. Devolve uma string" factlist
 
-#########################
-factório(n) = throw(TypeError(n, Int, typeof(n)))
+factlist(x) = factlist(BigInt(floor(real(x))))
 
-function factório(n::Int)
+#########################
+factório(n) = factório(BigInt(floor(real(n))))
+
+function factório(n::BigInt)
 	n < 0 && throw(DomainError(n, "precisa ser maior que 0"))
 	n < 2 ? n = 1 : n *= factório(n - 1)
 end
