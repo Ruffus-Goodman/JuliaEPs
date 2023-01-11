@@ -1,4 +1,21 @@
-﻿function exp_sup(pot::Number)
+﻿"""
+    exp_sup(pot) -> :AbstractString
+
+Gives a superscript form of any potency.
+
+Not eval-friendly, meaning the Unicode
+returned can't be computed in this state.
+
+Non-integer potencies such as 0.5 (sqrt as a potency) 
+or 2/3 (cbrt combined with square) are invalid.
+
+# Examples
+```julia-repl
+julia> exp_sup(23)
+²³
+```
+"""
+function exp_sup(pot::Number)
 	exp_str = ""
 	E = ["⁰", "¹", "²", "³", "⁴", "⁵", "⁶", "⁷", "⁸", "⁹"]
 	pot_str = "$pot"
@@ -7,11 +24,21 @@
 	end
 	return exp_str
 end
-@doc "Função que converte expoentes em sobrescrito não-computável" exp_sup
 
-# Testando Primos
+# Primes block
 #########################
 
+"""
+    isprime(x::BigInt) -> :Bool
+
+Verify if a given number is prime, meaning it can't be divided by any other integer number higher than 1.
+
+# Examples
+```julia-repl
+julia> isprime(23)
+true
+```
+"""
 function isprime(x::BigInt)
 	x < 1 && throw(DomainError(x, "argument must be an integer higher than 0"))
 	r = 2
@@ -25,12 +52,11 @@ function isprime(x::BigInt)
 	end
 	return true
 end
-@doc "Função que testa se um número é primo. Retorna Bool" isprime
 
-isprime(x) = error("fodeu!")
 isprime(x) = isprime(BigInt(floor(real(x))))
 
 #########################
+
 function promptprime()
 	print("Escreva um número inteiro maior que zero e listarei os primos para você: ")
 	user_input = readline(stdin)
@@ -54,21 +80,47 @@ end
 
 #########################
 
-function primelist(x::BigInt)
+"""
+    primelist(x::Number[, from=1]) -> :Vector
+
+List all primes until the number given.
+Optional minimum for prime list may be defined.
+
+# Examples
+```julia-repl
+julia> primelist(11)
+6-element Vector{Number}:
+  1
+  2
+  3
+  5
+  7
+ 11
+```
+"""
+function primelist(x::BigInt, from::BigInt = 1)
 	P = Number[1, 2, 3, 5, 7, 11, 13, 17, 19, 23]
+	x < from && return []
 	if x < 29
-		for i in lastindex(P):-1:1 ((x > P[i]) && (return P[1:i])); end
+		for i in lastindex(P):-1:1
+			if x >= P[i]
+				for j in 1:lastindex(P)
+					from <= P[j] && return P[j:i]
+				end
+			end
+		end
 	end
-	for i::BigInt in 29:2:x
+	for i in 29:2:x
 		isprime(i) && push!(P, i)
 	end
-	return P
+	for j in 1:lastindex(P)
+		from <= P[j] && return P[j:end]
+	end
 end
-@doc "função de listagem de primos. Devolve um vetor" primelist
 
-primelist(x) = primelist(BigInt(floor(real(x))))
+primelist(x, from=1) = primelist(BigInt(floor(real(x))),BigInt(floor(real(from))))
 
-# Fatorando em primos
+# Prime factors block
 #########################
 function promptfact()
 	print("Escreva um número inteiro maior que zero para ser fatorado em primos: ")
@@ -91,7 +143,22 @@ function promptfact()
 end
 @doc "versão com interface para usuário da fatoração de um número" promptfact
 
-function factlist(fact_num::BigInt; plist=false, math_exp=true)
+#########################
+
+"""
+    factlist(fact_num::Number[,plist = false, math_exp = true]) -> :AbstractString
+
+Factorize the number into primes.
+plist = true will list all primes used for the operation.
+math_exp = false will convert exponents into Unicode non-eval equivalents.
+
+# Examples
+```julia-repl
+julia> factlist(655)
+"5 * 131"
+```
+"""
+function factlist(fact_num::BigInt; plist = false, math_exp = true)
 	P = primelist(fact_num)
 	fatorado = ""
 	for i in 2:lastindex(P)
@@ -115,15 +182,24 @@ function factlist(fact_num::BigInt; plist=false, math_exp=true)
 	plist && println(P)
 	return fatorado[4:end]
 end
-@doc "função de listagem de fatoração. Devolve uma string" factlist
 
 factlist(fact_num; plist=false, math_exp=true) = factlist(BigInt(floor(real(fact_num))); plist, math_exp)
 
 #########################
+"""
+    factório(n) -> :BigInt
+
+A lame, but simplified way to calculate factorial numbers n!
+
+# Examples
+```julia-repl
+julia> factório(6)
+720
+```
+"""
 factório(n) = factório(BigInt(floor(real(n))))
 
 function factório(n::BigInt)
 	n < 0 && throw(DomainError(n, "precisa ser maior que 0"))
 	n < 2 ? n = 1 : n *= factório(n - 1)
 end
-@doc "fatorial ! de um número ex: 4! = 24, 6! = 720, etc" factório
