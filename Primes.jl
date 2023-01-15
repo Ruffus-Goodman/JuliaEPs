@@ -53,7 +53,7 @@ function isprime(x::BigInt)
 	return true
 end
 
-isprime(x) = isprime(BigInt(floor(real(x))))
+isprime(x) = real(x) |> floor |> BigInt |> isprime
 
 #########################
 
@@ -100,7 +100,7 @@ julia> primelist(11)
 """
 function primelist(x::BigInt, from::BigInt = 1)
 	P = Number[1, 2, 3, 5, 7, 11, 13, 17, 19, 23]
-	x < from && return []
+	x <= from && return []
 	if x < 29
 		for i in lastindex(P):-1:1
 			if x >= P[i]
@@ -118,7 +118,7 @@ function primelist(x::BigInt, from::BigInt = 1)
 	end
 end
 
-primelist(x, from=1) = primelist(BigInt(floor(real(x))),BigInt(floor(real(from))))
+primelist(x, from=1) = primelist(real(x) |> floor |> BigInt,real(from) |> floor |> BigInt)
 
 # Prime factors block
 #########################
@@ -183,7 +183,7 @@ function factlist(fact_num::BigInt; plist = false, math_exp = true)
 	return fatorado[4:end]
 end
 
-factlist(fact_num; plist=false, math_exp=true) = factlist(BigInt(floor(real(fact_num))); plist, math_exp)
+factlist(fact_num; plist=false, math_exp=true) = factlist(real(fact_num) |> floor |> BigInt; plist, math_exp)
 
 #########################
 """
@@ -197,9 +197,8 @@ julia> factório(6)
 720
 ```
 """
-factório(n) = factório(BigInt(floor(real(n))))
+factório(n) = real(n) |> abs |> floor |> BigInt |> factório
 
 function factório(n::BigInt)
-	n < 0 && throw(DomainError(n, "precisa ser maior que 0"))
 	n < 2 ? n = 1 : n *= factório(n - 1)
 end
