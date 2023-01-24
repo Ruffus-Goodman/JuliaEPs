@@ -17,10 +17,12 @@ julia> exp_sup(23)
 """
 function exp_sup(pot::Number)
 	exp_str = ""
-	E = ["⁰", "¹", "²", "³", "⁴", "⁵", "⁶", "⁷", "⁸", "⁹"]
+	E = Dict("0" => "⁰", "1" => "¹", "2" => "²", "3" => "³", "4" => "⁴", "5" => "⁵", "6" => "⁶", "7" => "⁷", "8" => "⁸", "9" => "⁹")
 	pot_str = "$pot"
-	for i in eachindex(pot_str)
-		exp_str *= E[parse(Int,pot_str[i])+1]
+	i = nextind(pot_str,0)
+	while i <= lastindex(pot_str)
+		exp_str *= get(E, pot_str[i:i],"0")
+		i = nextind(pot_str,i)
 	end
 	return exp_str
 end

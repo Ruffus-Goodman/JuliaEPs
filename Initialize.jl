@@ -1,4 +1,11 @@
-cd(raw"C:\Users\G0_Ma5T3R\julia_scripts"); pwd()
+cd(raw"C:\Users\G0_Ma5T3R\julia_scripts")
+
+using Dates
+using Pkg
+using OhMyREPL
+using Term
+
+#########################
 
 function SYSOUT(content::AbstractString; fname="Sysout.txt", mode="print", dir="standard")
 	(dir == "standard") && (dir = raw"C:\Users\G0_Ma5T3R\julia_scripts\x"; dir = dir[1:end-1])
@@ -30,3 +37,24 @@ macro SYSOUT(content::Expr)
 		$(esc(content))	
 	end
 end
+
+#########################
+
+if parse(Int64,Dates.format(now(),"HH")) < 12 
+	greet = "{(240,240,90)}Good morning, {/(240,240,90)}"
+elseif parse(Int64,Dates.format(now(),"HH")) < 18
+	greet = "{orange}Good afternoon, {/orange}"
+else
+	greet = "{(40,40,190)}Good evening, {/(40,40,190)}"
+end
+
+devname = "{bold}Ruffus Goodman!{/bold}"
+
+feelings = "{red}I'm eager to learn with you!{/red}"
+
+welcome = Panel(greet * devname / feelings ; fit=true, box=:DOUBLE, style="dim green", justify=:center)
+
+welcome2 = Term.Spacer(3,25)
+
+tprint(welcome2 * welcome; highlight = false)
+

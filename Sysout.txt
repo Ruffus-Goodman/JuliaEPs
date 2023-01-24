@@ -1,5 +1,2 @@
 
-x::T < y::AbstractStringbegin
-    #= REPL[12]:1 =#
-    x::T < parse(T, y)
-end
+factório5
